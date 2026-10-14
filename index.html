@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: Комплексообразование и УФ-спектрофотометрия</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .info {
+            background-color: #e8f4f8;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .question {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .question h3 {
+            margin-top: 0;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        .task-badge {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 0.75em;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        .options button {
+            width: 100%;
+            padding: 12px 15px;
+            text-align: left;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+        .options button:hover:not(:disabled) {
+            background-color: #e2e6ea;
+        }
+        .options button:disabled {
+            cursor: default;
+            opacity: 0.8;
+        }
+        .correct {
+            background-color: #d4edda !important;
+            border-color: #c3e6cb !important;
+            color: #155724;
+            font-weight: bold;
+        }
+        .wrong {
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb !important;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+        .feedback.correct-text { color: #155724; }
+        .feedback.wrong-text { color: #721c24; }
+        
+        #result-container {
+            display: none;
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        #result-container h2 {
+            color: #2c3e50;
+        }
+        #result-container p {
+            font-size: 1.2em;
+        }
+        .btn-restart {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .btn-restart:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Тест по спецкурсу</h1>
+    <div class="info">
+        <strong>Дисциплина:</strong> Исследование реакций комплексообразования в растворе<br>
+        <strong>Темы:</strong> Комплексообразование с полимерами + УФ-спектрофотометрия<br>
+        <strong>Инструкция:</strong> У вас есть <b>только одна попытка</b> ответить на каждый вопрос. В тесте есть расчётные задачи. Выбирайте внимательно!
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <div id="result-container">
+        <h2>Тест завершен!</h2>
+        <p id="score-text"></p>
+        <p id="grade-text"></p>
+        <button class="btn-restart" onclick="location.reload()">Пройти заново</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "1. Какое утверждение о циклодекстринах (ЦД) верно?",
+                options: [
+                    "α-ЦД имеет самую большую полость среди α-, β- и γ-ЦД",
+                    "β-ЦД состоит из 7 глюкопиранозных звеньев и имеет внутренний диаметр ~0.78 нм",
+                    "γ-ЦД состоит из 6 глюкопиранозных звеньев",
+                    "Циклодекстрины являются линейными полимерами"
+                ],
+                correct: 1
+            },
+            {
+                q: "2. В методе изомолярных серий точка экстремума на кривой зависимости выхода комплекса от состава раствора свидетельствует о:",
+                options: [
+                    "Максимальной концентрации комплекса, а её положение на оси абсцисс отвечает стехиометрическому соотношению реагирующих веществ",
+                    "Минимальной концентрации комплекса",
+                    "Точке, где константа устойчивости равна нулю",
+                    "Моменте начала осаждения комплекса"
+                ],
+                correct: 0
+            },
+            {
+                q: "3. Для определения константы устойчивости комплекса 5-фторурацила с β-циклодекстрином строят график зависимости:",
+                options: [
+                    "A от λ",
+                    "1/[ЦД] от [5-ФУ]0",
+                    "[5-ФУ]0/(A-A0) от 1/[ЦД]",
+                    "ε от C"
+                ],
+                correct: 2
+            },
+            {
+                q: "4. Какое из перечисленных веществ используется как окислитель для получения окисленных фракций полимеров и НЕ загрязняет реакционную смесь?",
+                options: [
+                    "KMnO4 в 1М HClO4",
+                    "Озон-кислородная смесь (O3 + O2)",
+                    "Реактив Фентона",
+                    "K2S2O8 + Fe2+"
+                ],
+                correct: 1
+            },
+            {
+                q: "5. В УФ-спектрофотометрии закон Бугера-Ламберта-Бера в форме A = ε·l·C справедлив при условии:",
+                options: [
+                    "Монохроматичности света, постоянства температуры и отсутствия химических процессов в растворе",
+                    "Использования только кварцевых кювет",
+                    "Концентрации вещества выше 1 моль/л",
+                    "Применения лазерного излучения"
+                ],
+                correct: 0
+            },
+            {
+                q: "6. Что такое удельный показатель поглощения (E 1% 1см)?",
+                options: [
+                    "Оптическая плотность раствора с концентрацией 1 моль/л при толщине слоя 1 см",
+                    "Оптическая плотность 1% раствора при толщине поглощающего слоя 1 см",
+                    "Коэффициент экстинкции, умноженный на молекулярную массу",
+                    "Оптическая плотность при длине волны 1 нм"
+                ],
+                correct: 1
+            },
+            {
+                q: "7. Какая формула связывает молярный (ε) и удельный (E 1% 1см) показатели поглощения?",
+                options: [
+                    "ε = E · M / 10",
+                    "ε = E · 10 / M",
+                    "ε = E · M · 10",
+                    "ε = E / (M · 10)"
+                ],
+                correct: 0
+            },
+            {
+                q: "8. Закон аддитивности оптических плотностей гласит, что:",
+                options: [
+                    "Оптическая плотность смеси равна сумме оптических плотностей компонентов при данной длине волны (если они не взаимодействуют)",
+                    "Оптическая плотность смеси всегда равна произведению оптических плотностей компонентов",
+                    "Оптическая плотность не зависит от концентрации",
+                    "Оптическая плотность смеси равна разности оптических плотностей компонентов"
+                ],
+                correct: 0
+            },
+            {
+                q: "9. Какое из перечисленных условий НЕ является причиной отклонения от закона Бугера-Ламберта-Бера?",
+                options: [
+                    "Немонохроматичность источника света",
+                    "Влияние рассеянного света",
+                    "Использование двухлучевого спектрофотометра",
+                    "Химические процессы (диссоциация, комплексообразование)"
+                ],
+                correct: 2
+            },
+            {
+                q: "10. Какой растворитель имеет самый низкий предел пропускания в УФ-области?",
+                options: [
+                    "Ацетон",
+                    "Бензол",
+                    "Вода",
+                    "Хлороформ"
+                ],
+                correct: 2
+            },
+            {
+                q: "11. Какой тип электронного перехода в молекуле требует наибольшей энергии?",
+                options: [
+                    "π → π*",
+                    "n → π*",
+                    "σ → σ*",
+                    "n → σ*"
+                ],
+                correct: 2
+            },
+            {
+                q: "12. Что такое батохромный сдвиг?",
+                options: [
+                    "Смещение полосы поглощения в сторону коротких волн (синий сдвиг)",
+                    "Смещение полосы поглощения в сторону длинных волн (красный сдвиг)",
+                    "Увеличение интенсивности поглощения",
+                    "Уменьшение интенсивности поглощения"
+                ],
+                correct: 1
+            },
+            {
+                q: "13. Задача. Рассчитайте минимальную концентрацию вещества (моль/л), которую можно определить фотоколориметрически, если молярный коэффициент светопоглощения ε = 5·10^4, минимальная измеряемая оптическая плотность A = 0.01, толщина слоя l = 5 см.",
+                options: [
+                    "4·10^-8 моль/л",
+                    "4·10^-7 моль/л",
+                    "2·10^-8 моль/л",
+                    "1·10^-6 моль/л"
+                ],
+                correct: 0
+            },
+            {
+                q: "14. Задача. Определите молярный коэффициент светопоглощения (ε) окрашенного соединения, если оптическая плотность раствора A = 0.75 при толщине слоя l = 5 см. Концентрация растворённого вещества составляет 0.05 мг в 50 мл (молярная масса = 56 г/моль).",
+                options: [
+                    "8.4·10^3",
+                    "4.2·10^3",
+                    "1.7·10^3",
+                    "8.4·10^2"
+                ],
+                correct: 0
+            },
+            {
+                q: "15. Задача. Исследуемый раствор имеет оптическую плотность A_x = 0.9 при l_x = 5 см. Стандартный раствор того же вещества с концентрацией C_ст = 5 мкг/мл имеет A_ст = 0.6 при l_ст = 3 см. Чему равна концентрация исследуемого раствора?",
+                options: [
+                    "4.5 мкг/мл",
+                    "5.0 мкг/мл",
+                    "3.0 мкг/мл",
+                    "6.0 мкг/мл"
+                ],
+                correct: 0
+            },
+            {
+                q: "16. Задача. Навеску стали 0.1 г растворили в 100 мл кислоты. Аликвоту 15 мл обработали в мерной колбе на 50 мл. По калибровочному графику в этой колбе содержится 0.123 мг никеля. Определите процентное содержание никеля в стали.",
+                options: [
+                    "0.82%",
+                    "0.123%",
+                    "1.23%",
+                    "0.41%"
+                ],
+                correct: 0
+            },
+            {
+                q: "17. Задача. Оптическая плотность раствора трисульфосалицилата железа при λ=433 нм в кювете l=2 см равна 0.149. Для реакции взято 4 мл 0.0005820 М раствора железа, реакция проведена в колбе на 50 мл. Вычислите молярный коэффициент светопоглощения (ε). (M(Fe)=56 г/моль)",
+                options: [
+                    "1.6·10^3",
+                    "3.2·10^3",
+                    "8.0·10^2",
+                    "1.6·10^2"
+                ],
+                correct: 0
+            },
+            {
+                q: "18. Какое из перечисленных лекарственных веществ является производным урацила?",
+                options: [
+                    "Ацетилсалициловая кислота",
+                    "5-Фторурацил",
+                    "Парацетамол",
+                    "Анаприлин"
+                ],
+                correct: 1
+            },
+            {
+                q: "19. Для чего в фармакопейном анализе используются Государственные стандартные образцы (ГСО)?",
+                options: [
+                    "Для калибровки pH-метра",
+                    "В качестве образцов сравнения при количественном определении действующего вещества",
+                    "Для проверки чистоты растворителей",
+                    "Для измерения температуры плавления"
+                ],
+                correct: 1
+            },
+            {
+                q: "20. Какое преимущество УФ-спектрофотометрии упоминается в лекции?",
+                options: [
+                    "Возможность анализа без растворения образца",
+                    "Использование сравнительно небольшого количества вещества (2-5 мг)",
+                    "Полное отсутствие погрешностей",
+                    "Возможность определения всех элементов таблицы Менделеева"
+                ],
+                correct: 1
+            },
+            {
+                q: "21. Что образуется при окислении поливинилового спирта озон-кислородной смесью (основные продукты)?",
+                options: [
+                    "Моно- и β-дикетоны",
+                    "Карбоновые кислоты (СООН-группы)",
+                    "Альдегиды и кетоны",
+                    "Все перечисленное верно в зависимости от условий"
+                ],
+                correct: 3
+            },
+            {
+                q: "22. В методе молярных отношений для определения состава комплекса строят зависимость:",
+                options: [
+                    "ΔA от концентрации одного компонента при постоянной концентрации второго",
+                    "A от длины волны",
+                    "ε от температуры",
+                    "pH от объёма титранта"
+                ],
+                correct: 0
+            },
+            {
+                q: "23. Чему равна оптическая плотность (A), если пропускание T = 0.1?",
+                options: [
+                    "A = 1",
+                    "A = 0.1",
+                    "A = 10",
+                    "A = 0.9"
+                ],
+                correct: 0
+            },
+            {
+                q: "24. Какое из перечисленных веществ НЕ является полимерной или олигомерной матрицей из Лекции 1?",
+                options: [
+                    "Арабиногалактан",
+                    "Яблочный пектин",
+                    "Поливиниловый спирт",
+                    "Полистирол"
+                ],
+                correct: 3
+            },
+            {
+                q: "25. Какой метод регистрации используется для определения СООН-групп при окислении полимеров?",
+                options: [
+                    "Потенциометрическое титрование",
+                    "ИК-спектроскопия",
+                    "ВЭЖХ",
+                    "ГХ-МС"
+                ],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        const quizContainer = document.getElementById('quiz-container');
+        const resultContainer = document.getElementById('result-container');
+        const scoreText = document.getElementById('score-text');
+        const gradeText = document.getElementById('grade-text');
+
+        function renderQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResult();
+                return;
+            }
+
+            answered = false;
+            const q = questions[currentQuestion];
+            
+            let html = `<div class="question" id="q${currentQuestion}">`;
+            
+            if (currentQuestion >= 12 && currentQuestion <= 16) {
+                html += `<span class="task-badge">РАСЧЁТНАЯ ЗАДАЧА</span>`;
+            }
+            
+            html += `<h3>${q.q}</h3>
+                <ul class="options">`;
+            
+            q.options.forEach((opt, index) => {
+                html += `<li><button onclick="checkAnswer(${index})" id="btn-${currentQuestion}-${index}">${opt}</button></li>`;
+            });
+            
+            html += `</ul><div class="feedback" id="fb-${currentQuestion}"></div></div>`;
+            
+            quizContainer.innerHTML = html;
+        }
+
+        function checkAnswer(selectedIndex) {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestion];
+            const buttons = document.querySelectorAll(`#q${currentQuestion} button`);
+            const feedback = document.getElementById(`fb-${currentQuestion}`);
+
+            buttons.forEach(btn => btn.disabled = true);
+            buttons[q.correct].classList.add('correct');
+
+            if (selectedIndex === q.correct) {
+                score++;
+                feedback.textContent = "✅ Верно!";
+                feedback.className = "feedback correct-text";
+            } else {
+                if (selectedIndex !== q.correct) {
+                    buttons[selectedIndex].classList.add('wrong');
+                }
+                feedback.textContent = "❌ Неверно. Правильный ответ подсвечен зеленым.";
+                feedback.className = "feedback wrong-text";
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                renderQuestion();
+            }, 1800);
+        }
+
+        function showResult() {
+            quizContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+            
+            const total = questions.length;
+            const percent = Math.round((score / total) * 100);
+            
+            scoreText.textContent = `Вы ответили правильно на ${score} из ${total} вопросов (${percent}%).`;
+            
+            if (percent >= 90) {
+                gradeText.textContent = "Оценка: Отлично! Вы прекрасно усвоили материал и умеете решать задачи.";
+                gradeText.style.color = "#27ae60";
+            } else if (percent >= 75) {
+                gradeText.textContent = "Оценка: Хорошо. Есть небольшие пробелы, стоит повторить расчётные формулы.";
+                gradeText.style.color = "#2980b9";
+            } else if (percent >= 50) {
+                gradeText.textContent = "Оценка: Удовлетворительно. Рекомендуется перечитать лекции и прорешать задачи заново.";
+                gradeText.style.color = "#f39c12";
+            } else {
+                gradeText.textContent = "Оценка: Неудовлетворительно. Необходимо тщательно проработать материал.";
+                gradeText.style.color = "#c0392b";
+            }
+        }
+
+        renderQuestion();
+    </script>
+</body>
+</html>
